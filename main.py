@@ -58,7 +58,7 @@ DEVICE = '7'
 LOG_DIR = "/home/mck/tensorflow_logs"
 PROJECT_NAME = "home_credit_risk"
 VERSION = "V50_gonzalo_zeus"
-
+    
 dl_model = DLModel(batch_size=BATCH_SIZE, 
                    col_classes=C.col_classes,
                    learning_rate=1e-4, 
