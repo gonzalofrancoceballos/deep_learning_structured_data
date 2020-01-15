@@ -433,3 +433,37 @@ def update_best(best_loss, best_auc, new_loss, new_auc):
         best_auc = new_auc
         flag_new_best = True
     return flag_new_best, best_loss, best_auc
+
+
+def one_hot_encoding(df, str_col, labels=None, drop=True, add_other=True):
+    """
+    Generates onh-hot-encoding variables
+
+    :param df: table to modify (type: pd.DataFrame)
+    :param str_col: name of column to one-hot-encode (type: str)
+    :param labels: possible labels (type: str)
+    :param drop: flag to drop str_col after computing one-hot-encoding (type: bool)
+    :param add_other: flag to add an "other" column for those values not in labels (type: bool)
+    :return: modified table (type: pd.DataFrame)
+    """
+
+    if labels is None:
+        logger.warning(
+            "[ONE-HOT-ENCODING] No label list especified, inferring from data"
+        )
+        labels = df[str_col].unique()
+    logger.info(f"[ONE-HOT-ENCODING] Labels are: {labels}")
+
+    logger.info(f"[ONE.HOT-ENCODING] Generating new variables")
+    for label in labels:
+        df[f"{str_col}_{label}"] = np.where(df[str_col] == label, 1, 0)
+
+    if add_other:
+        logger.info(f"[ONE-HOT-ENCODING] Including variable for missing label")
+        df[f"{str_col}_OTHER"] = np.where(~df[str_col].isin(labels), 1, 0)
+
+    if drop:
+        logger.info(f"[ONE-HOT-ENCODING] Dropping original categorical column")
+        df.drop(columns=str_col, axis=1, inplace=True)
+
+    return df
